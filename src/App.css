@@ -7,3 +7,7 @@ Form {
   flex-direction: column;
   gap: 10px;
 }
+
+tr {
+  cursor: pointer;
+}
