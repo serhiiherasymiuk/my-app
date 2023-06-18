@@ -18,6 +18,7 @@ function App() {
   const categorySchema = Yup.object().shape({
     name: Yup.string()
       .required("Name is required")
+      .max(255, "Name must be smaller")
       .test("name", "Category already exists", function (value) {
         const { path, createError } = this;
         const categoryExists = categories.some(
@@ -31,7 +32,9 @@ function App() {
           ? createError({ path, message: "Category already exists" })
           : true;
       }),
-    description: Yup.string().required("Description is required"),
+    description: Yup.string()
+      .required("Description is required")
+      .max(4000, "Description must be smaller"),
     image: Yup.string()
       .required("Image URL is required")
       .url("Invalid URL format"),
@@ -213,7 +216,10 @@ function App() {
                             <button
                               type="button"
                               className="btn btn-danger btn-sm"
-                              onClick={() => handleDelete(c.id)}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleDelete(c.id);
+                              }}
                             >
                               <i className="bi bi-trash3"></i>
                             </button>
