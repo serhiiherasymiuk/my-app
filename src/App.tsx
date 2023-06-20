@@ -2,36 +2,15 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Button, Modal } from "react-bootstrap";
+import { ICategory } from "./interfaces/category";
 import * as Yup from "yup";
-
-interface ICategory {
-  id: number;
-  name: string;
-  image: string;
-  description: string;
-}
 
 function App() {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
   const categorySchema = Yup.object().shape({
-    name: Yup.string()
-      .required("Name is required")
-      .max(255, "Name must be smaller")
-      .test("name", "Category already exists", function (value) {
-        const { path, createError } = this;
-        const categoryExists = categories.some(
-          (category: ICategory) =>
-            category.name.toLowerCase() === value.toLowerCase() &&
-            value !=
-              categories.find((category) => category.id === selectedCategory)
-                ?.name
-        );
-        return categoryExists
-          ? createError({ path, message: "Category already exists" })
-          : true;
-      }),
     description: Yup.string()
       .required("Description is required")
       .max(4000, "Description must be smaller"),
@@ -39,6 +18,43 @@ function App() {
       .required("Image URL is required")
       .url("Invalid URL format"),
   });
+
+  function validateEditName(value: string) {
+    let error;
+    if (!value) {
+      error = "Name is required";
+    } else if (value.length > 255) {
+      error = "Name must be smaller";
+    } else {
+      const categoryExists = categories.some(
+        (category: ICategory) =>
+          category.name.toLowerCase() === value.toLowerCase() &&
+          category.id !== selectedCategory
+      );
+      if (categoryExists) {
+        error = "Category already exists";
+      }
+    }
+    return error;
+  }
+
+  function validateCreateName(value: string) {
+    let error;
+    if (!value) {
+      error = "Name is required";
+    } else if (value.length > 255) {
+      error = "Name must be smaller";
+    } else {
+      const categoryExists = categories.some(
+        (category: ICategory) =>
+          category.name.toLowerCase() === value.toLowerCase()
+      );
+      if (categoryExists) {
+        error = "Category already exists";
+      }
+    }
+    return error;
+  }
 
   useEffect(() => {
     axios.get("http://laravel.pv125.com/api/category").then((resp) => {
@@ -97,20 +113,53 @@ function App() {
     }
   };
 
-  const handleDelete = async (categoryId: number) => {
-    try {
-      await axios.delete(`http://laravel.pv125.com/api/category/${categoryId}`);
-      const updatedCategories = categories.filter(
-        (category) => category.id !== categoryId
-      );
-      setCategories(updatedCategories);
-    } catch (error) {
-      console.error("Error deleting category:", error);
+  const handleDelete = async () => {
+    if (categoryToDelete !== null) {
+      try {
+        await axios.delete(
+          `http://laravel.pv125.com/api/category/${categoryToDelete}`
+        );
+        const updatedCategories = categories.filter(
+          (category) => category.id !== categoryToDelete
+        );
+        setCategories(updatedCategories);
+      } catch (error) {
+        console.error("Error deleting category:", error);
+      }
     }
   };
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
+
   return (
     <>
+      <Modal show={showDeleteModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this category?</Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setShowDeleteModal(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setShowDeleteModal(false);
+              handleDelete();
+            }}
+          >
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
@@ -128,6 +177,7 @@ function App() {
                 name="name"
                 aria-label="Name"
                 aria-describedby="basic-addon2"
+                validate={validateCreateName}
               />
               <ErrorMessage
                 name="name"
@@ -218,7 +268,8 @@ function App() {
                               className="btn btn-danger btn-sm"
                               onClick={(event) => {
                                 event.stopPropagation();
-                                handleDelete(c.id);
+                                setCategoryToDelete(c.id);
+                                setShowDeleteModal(true);
                               }}
                             >
                               <i className="bi bi-trash3"></i>
@@ -242,6 +293,7 @@ function App() {
                                 name="name"
                                 aria-label="Name"
                                 aria-describedby="basic-addon2"
+                                validate={validateEditName}
                               />
                               <ErrorMessage
                                 name="name"
