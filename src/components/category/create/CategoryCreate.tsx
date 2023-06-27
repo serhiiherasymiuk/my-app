@@ -16,7 +16,7 @@ export const CategoryCreate = () => {
 
   const initialValues: ICategoryCreate = {
     name: "",
-    image: "",
+    image: null,
     description: "",
   };
 
@@ -37,16 +37,18 @@ export const CategoryCreate = () => {
     description: Yup.string()
       .required("Description is required")
       .max(4000, "Description must be smaller"),
-    image: Yup.string()
-      .required("Image URL is required")
-      .url("Invalid URL format"),
+    image: Yup.mixed().required("Image is required"),
   });
 
   const handleSubmit = async (values: ICategoryCreate) => {
     try {
       await categorySchema.validate(values);
 
-      const response = await http_common.post("api/category", values);
+      const response = await http_common.post("api/category", values, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       dispatch(addCategory(response.data));
     } catch (error) {
@@ -61,7 +63,7 @@ export const CategoryCreate = () => {
         onSubmit={handleSubmit}
         validationSchema={categorySchema}
       >
-        {({ errors, touched }) => (
+        {({ errors, touched, setFieldValue }) => (
           <Form>
             <div className="form-group">
               <Field
@@ -98,15 +100,22 @@ export const CategoryCreate = () => {
               />
             </div>
             <div className="form-group">
-              <Field
-                type="text"
+              <input
+                type="file"
                 className={`form-control ${
                   errors.image && touched.image ? "is-invalid" : ""
                 }`}
-                placeholder="Image url"
+                placeholder="Image file"
                 name="image"
-                aria-label="Image url"
+                aria-label="Image file"
                 aria-describedby="basic-addon2"
+                onChange={(event) => {
+                  const file =
+                    event.currentTarget.files && event.currentTarget.files[0];
+                  if (file) {
+                    setFieldValue("image", file);
+                  }
+                }}
               />
               <ErrorMessage
                 name="image"
@@ -114,6 +123,7 @@ export const CategoryCreate = () => {
                 className="invalid-feedback"
               />
             </div>
+
             <button type="submit" className="btn btn-primary">
               Create
             </button>

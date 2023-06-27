@@ -20,9 +20,8 @@ export const CategoryEdit = () => {
   const dispatch = useDispatch();
 
   const [initialValues, setInitialValues] = useState<ICategoryEdit>({
-    id: id ? Number(id) : 0,
     name: "",
-    image: "",
+    image: null,
     description: "",
   });
 
@@ -44,15 +43,22 @@ export const CategoryEdit = () => {
     description: Yup.string()
       .required("Description is required")
       .max(4000, "Description must be smaller"),
-    image: Yup.string()
-      .required("Image URL is required")
-      .url("Invalid URL format"),
+    image: Yup.mixed().required("Image is required"),
   });
 
   const handleEdit = async (values: ICategoryEdit) => {
+    console.log(values);
     try {
       await categorySchema.validate(values);
-      const response = await http_common.post(`api/category/edit${id}`, values);
+      const response = await http_common.post(
+        `api/category/edit/${id}`,
+        values,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       dispatch(editCategory(response));
       navigate("/");
     } catch (error) {
@@ -80,7 +86,7 @@ export const CategoryEdit = () => {
         validationSchema={categorySchema}
         enableReinitialize={true}
       >
-        {({ errors, touched }) => (
+        {({ errors, touched, setFieldValue }) => (
           <Form>
             <div className="form-group">
               <Field
@@ -117,15 +123,22 @@ export const CategoryEdit = () => {
               />
             </div>
             <div className="form-group">
-              <Field
-                type="text"
+              <input
+                type="file"
                 className={`form-control ${
                   errors.image && touched.image ? "is-invalid" : ""
                 }`}
-                placeholder="Image url"
+                placeholder="Image file"
                 name="image"
-                aria-label="Image url"
+                aria-label="Image file"
                 aria-describedby="basic-addon2"
+                onChange={(event) => {
+                  const file =
+                    event.currentTarget.files && event.currentTarget.files[0];
+                  if (file) {
+                    setFieldValue("image", file);
+                  }
+                }}
               />
               <ErrorMessage
                 name="image"
