@@ -1,24 +1,29 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { ICategory, ICategoryCreate } from "../../../interfaces/category";
+import { ICategory, ICategoryEdit } from "../../../../interfaces/category";
 import * as Yup from "yup";
-import { RootState } from "../../../redux/store";
+import { RootState } from "../../../../redux/store";
 import { useSelector } from "react-redux";
-import { addCategory } from "../../../redux/category";
+import { editCategory } from "../../../../redux/category";
 import { useDispatch } from "react-redux";
-import http_common from "../../../http_common";
+import http_common from "../../../../http_common";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-export const CategoryCreate = () => {
+export const CategoryEdit = () => {
   const categories = useSelector(
     (state: RootState) => state.categories.categories
   );
 
+  const navigate = useNavigate();
+  const { id } = useParams();
+
   const dispatch = useDispatch();
 
-  const initialValues: ICategoryCreate = {
+  const [initialValues, setInitialValues] = useState<ICategoryEdit>({
     name: "",
     image: null,
     description: "",
-  };
+  });
 
   const categorySchema = Yup.object().shape({
     name: Yup.string()
@@ -30,7 +35,8 @@ export const CategoryCreate = () => {
         }
         const categoryExists = categories.some(
           (category: ICategory) =>
-            category.name.toLowerCase() === value.toLowerCase()
+            category.name.toLowerCase() === value.toLowerCase() &&
+            category.id !== Number(id)
         );
         return !categoryExists;
       }),
@@ -40,28 +46,45 @@ export const CategoryCreate = () => {
     image: Yup.mixed().required("Image is required"),
   });
 
-  const handleSubmit = async (values: ICategoryCreate) => {
+  const handleEdit = async (values: ICategoryEdit) => {
+    console.log(values);
     try {
       await categorySchema.validate(values);
-
-      const response = await http_common.post("api/category", values, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      dispatch(addCategory(response.data));
+      const response = await http_common.post(
+        `api/category/edit/${id}`,
+        values,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      dispatch(editCategory(response));
+      navigate("../..");
     } catch (error) {
-      console.error("Error adding category:", error);
+      console.error("Error editing category:", error);
     }
   };
+
+  useEffect(() => {
+    http_common.get(`api/category/${id}`).then((resp) => {
+      const { data } = resp;
+      setInitialValues((prevValues) => ({
+        ...prevValues,
+        name: data.name,
+        description: data.description,
+        image: data.image,
+      }));
+    });
+  }, [id]);
 
   return (
     <>
       <Formik
         initialValues={initialValues}
-        onSubmit={handleSubmit}
+        onSubmit={handleEdit}
         validationSchema={categorySchema}
+        enableReinitialize={true}
       >
         {({ errors, touched, setFieldValue }) => (
           <Form>
@@ -123,9 +146,8 @@ export const CategoryCreate = () => {
                 className="invalid-feedback"
               />
             </div>
-
             <button type="submit" className="btn btn-primary">
-              Create
+              Save
             </button>
           </Form>
         )}

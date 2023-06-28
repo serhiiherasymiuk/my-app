@@ -12,13 +12,8 @@ tr {
   cursor: pointer;
 }
 
-i {
-  color: white;
-}
-
 .buttons-container {
   display: flex;
   flex-direction: column;
-
   gap: 10px;
 }

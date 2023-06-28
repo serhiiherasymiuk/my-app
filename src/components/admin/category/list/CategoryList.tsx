@@ -1,13 +1,13 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import React, { useEffect, useState } from "react";
-import { ICategory } from "../../../interfaces/category";
+import { ICategory } from "../../../../interfaces/category";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { editCategory, setCategories } from "../../../redux/category";
-import { RootState } from "../../../redux/store";
-import { ModalDelete } from "../../common/ModalDelete";
-import http_common from "../../../http_common";
+import { editCategory, setCategories } from "../../../../redux/category";
+import { RootState } from "../../../../redux/store";
+import { ModalDelete } from "../../../common/ModalDelete";
+import http_common from "../../../../http_common";
 
 export const CategoryList = () => {
   const categories = useSelector(
@@ -24,7 +24,7 @@ export const CategoryList = () => {
 
   return (
     <>
-      <Link to={"category/create"}>
+      <Link to={"create"}>
         <button type="button" className="btn btn-dark">
           Create
         </button>
@@ -54,7 +54,7 @@ export const CategoryList = () => {
                   <td className="buttons-container">
                     <ModalDelete id={c.id} text={c.name}></ModalDelete>
                     <Link
-                      to={`/category/edit/${c.id}`}
+                      to={`edit/${c.id}`}
                       className="btn btn-warning btn-sm"
                     >
                       <i className="bi bi-pencil"></i>
