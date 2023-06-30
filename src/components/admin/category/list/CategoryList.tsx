@@ -8,6 +8,7 @@ import { editCategory, setCategories } from "../../../../redux/category";
 import { RootState } from "../../../../redux/store";
 import { ModalDelete } from "../../../common/ModalDelete";
 import http_common from "../../../../http_common";
+import { APP_ENV } from "../../../../env";
 
 export const CategoryList = () => {
   const categories = useSelector(
@@ -49,16 +50,22 @@ export const CategoryList = () => {
                   <td>{c.name}</td>
                   <td>{c.description}</td>
                   <td>
-                    <img width={50} src={c.image} alt="" />
+                    <img
+                      height={100}
+                      src={`${APP_ENV.BASE_URL}/uploads/300_${c.image}`}
+                      alt=""
+                    />
                   </td>
-                  <td className="buttons-container">
-                    <ModalDelete id={c.id} text={c.name}></ModalDelete>
-                    <Link
-                      to={`edit/${c.id}`}
-                      className="btn btn-warning btn-sm"
-                    >
-                      <i className="bi bi-pencil"></i>
-                    </Link>
+                  <td>
+                    <div className="buttons-container">
+                      <ModalDelete id={c.id} text={c.name}></ModalDelete>
+                      <Link
+                        to={`edit/${c.id}`}
+                        className="btn btn-warning btn-sm"
+                      >
+                        <i className="bi bi-pencil"></i>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               </React.Fragment>
