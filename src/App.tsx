@@ -6,6 +6,7 @@ import { CategoryEdit } from "./components/admin/category/edit/CategoryEdit";
 import { AdminLayout } from "./components/admin/container/AdminLayout";
 import { AdminDashboard } from "./components/admin/dashboard/AdminDashboard";
 import { Login } from "./components/login/Login";
+import { Register } from "./components/register/Register";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path="/"></Route>
         <Route path={"/login"} element={<Login />} />
+        <Route path={"/register"} element={<Register />} />
         <Route path={"/admin"} element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="category">

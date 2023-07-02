@@ -1,11 +1,11 @@
 export interface IRegister {
-  name: string;
-  lastName: string;
+  image: File | null;
   email: string;
+  lastName: string;
+  name: string;
   phone: string;
   password: string;
-  passwordConfirmation: number;
-  image: File | null;
+  password_confirmation: string;
 }
 
 export interface ILogin {
