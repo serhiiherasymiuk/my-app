@@ -5,12 +5,14 @@ import { CategoryCreate } from "./components/admin/category/create/CategoryCreat
 import { CategoryEdit } from "./components/admin/category/edit/CategoryEdit";
 import { AdminLayout } from "./components/admin/container/AdminLayout";
 import { AdminDashboard } from "./components/admin/dashboard/AdminDashboard";
+import { Login } from "./components/login/Login";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/"></Route>
+        <Route path={"/login"} element={<Login />} />
         <Route path={"/admin"} element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="category">
