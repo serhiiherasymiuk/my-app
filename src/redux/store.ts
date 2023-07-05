@@ -2,6 +2,8 @@ import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import categoryReducer from "./category";
+import { AuthReducer } from "./AuthReducer";
+import thunk from "redux-thunk";
 
 const persistConfig = {
   key: "root",
@@ -15,10 +17,12 @@ const customizedMiddleware = getDefaultMiddleware({
 });
 
 export const store = configureStore({
+  devTools: true,
   reducer: {
     categories: persistedReducer,
+    auth: AuthReducer,
   },
-  middleware: customizedMiddleware,
+  middleware: [thunk],
 });
 
 const persistor = persistStore(store);

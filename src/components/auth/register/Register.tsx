@@ -1,8 +1,8 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import http_common from "../../http_common";
+import http_common from "../../../http_common";
 import { useNavigate } from "react-router-dom";
-import { IRegister } from "../../interfaces/auth";
+import { IRegister } from "../../../interfaces/auth";
 
 export const Register = () => {
   const initialValues: IRegister = {

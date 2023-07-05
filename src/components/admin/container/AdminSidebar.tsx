@@ -66,24 +66,6 @@ export const AdminSidebar = () => {
                 Sign out
               </a>
             </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link d-flex align-items-center gap-2"
-                to="/login"
-              >
-                <i className="bi bi-file-earmark"></i>
-                Login
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link d-flex align-items-center gap-2"
-                to="/register"
-              >
-                <i className="bi bi-file-earmark"></i>
-                Register
-              </Link>
-            </li>
           </ul>
         </div>
       </div>

@@ -3,18 +3,23 @@ import "./App.css";
 import { CategoryList } from "./components/admin/category/list/CategoryList";
 import { CategoryCreate } from "./components/admin/category/create/CategoryCreate";
 import { CategoryEdit } from "./components/admin/category/edit/CategoryEdit";
-import { AdminLayout } from "./components/admin/container/AdminLayout";
 import { AdminDashboard } from "./components/admin/dashboard/AdminDashboard";
-import { Login } from "./components/login/Login";
-import { Register } from "./components/register/Register";
+import { Login } from "./components/auth/login/Login";
+import { Register } from "./components/auth/register/Register";
+import { AdminLayout } from "./components/admin/container/AdminLayout";
+import { DefaultLayout } from "./components/container/DefaultLayout";
+import { HomePage } from "./components/home/HomePage";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/"></Route>
-        <Route path={"/login"} element={<Login />} />
-        <Route path={"/register"} element={<Register />} />
+        <Route path="/" element={<DefaultLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+        </Route>
+
         <Route path={"/admin"} element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="category">

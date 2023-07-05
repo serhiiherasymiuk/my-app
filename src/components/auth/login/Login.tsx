@@ -1,11 +1,16 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
-import http_common from "../../http_common";
+import http_common from "../../../http_common";
 import { useNavigate } from "react-router-dom";
-import { ILogin } from "../../interfaces/auth";
+import { ILogin } from "../../../interfaces/auth";
+import { AuthUserActionType, IUser } from "../../../interfaces/user";
+import jwtDecode from "jwt-decode";
+import { useState } from "react";
 
 export const Login = () => {
+  const dispatch = useDispatch();
+
   const initialValues: ILogin = {
     email: "",
     password: "",
@@ -18,12 +23,27 @@ export const Login = () => {
 
   const navigate = useNavigate();
 
+  const [message, setMessage] = useState<string>("");
+
   const handleSubmit = async (values: ILogin) => {
     try {
       await loginSchema.validate(values);
 
-      await http_common.post("api/auth/login", values);
+      const result = await http_common.post("api/auth/login", values);
 
+      const { data } = result;
+      const token = data.access_token;
+      localStorage.token = token;
+      var user = jwtDecode(token) as IUser;
+      dispatch({
+        type: AuthUserActionType.LOGIN_USER,
+        payload: {
+          email: user.email,
+          name: user.name,
+        },
+      });
+      console.log("User info", user);
+      setMessage("");
       navigate("/");
     } catch (error) {
       console.error("Error during login:", error);
