@@ -40,6 +40,7 @@ export const Login = () => {
         payload: {
           email: user.email,
           name: user.name,
+          role: user.role,
         },
       });
       console.log("User info", user);
@@ -47,6 +48,7 @@ export const Login = () => {
       navigate("/");
     } catch (error) {
       console.error("Error during login:", error);
+      setMessage("An error occurred during login. Please try again.");
     }
   };
 
@@ -58,6 +60,11 @@ export const Login = () => {
     >
       {({ errors, touched }) => (
         <Form>
+          {message && (
+            <div className="alert alert-danger" role="alert">
+              {message}
+            </div>
+          )}
           <div className="form-group">
             <Field
               type="email"
