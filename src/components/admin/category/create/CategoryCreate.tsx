@@ -1,12 +1,16 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { ICategory, ICategoryCreate } from "../../../../interfaces/category";
 import * as Yup from "yup";
-import { RootState } from "../../../../redux/store";
+import { RootState, store } from "../../../../redux/store";
 import { useSelector } from "react-redux";
 import { addCategory } from "../../../../redux/category";
 import { useDispatch } from "react-redux";
 import http_common from "../../../../http_common";
 import { useNavigate } from "react-router-dom";
+import {
+  NotificationActionTypes,
+  NotificationSetMessage,
+} from "../../../../redux/reducers/notificationReducer";
 
 export const CategoryCreate = () => {
   const categories = useSelector(
@@ -54,6 +58,11 @@ export const CategoryCreate = () => {
       });
 
       dispatch(addCategory(response.data));
+      const action: NotificationSetMessage = {
+        payload: "Category successfully created",
+        type: NotificationActionTypes.SET_MESSAGE,
+      };
+      store.dispatch(action);
       navigate("..");
     } catch (error) {
       console.error("Error adding category:", error);

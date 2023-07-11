@@ -2,8 +2,10 @@ import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import categoryReducer from "./category";
-import { AuthReducer } from "./AuthReducer";
 import thunk from "redux-thunk";
+import { AuthReducer } from "./reducers/AuthReducer";
+import { IsLoadingReducer } from "./reducers/isLoadingReducer";
+import { NotificationReducer } from "./reducers/notificationReducer";
 
 const persistConfig = {
   key: "root",
@@ -21,6 +23,8 @@ export const store = configureStore({
   reducer: {
     categories: persistedReducer,
     auth: AuthReducer,
+    loading: IsLoadingReducer,
+    notification: NotificationReducer,
   },
   middleware: [thunk],
 });

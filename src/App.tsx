@@ -9,10 +9,14 @@ import { Register } from "./components/auth/register/Register";
 import { AdminLayout } from "./components/admin/container/AdminLayout";
 import { DefaultLayout } from "./components/container/DefaultLayout";
 import { HomePage } from "./components/home/HomePage";
+import Loader from "./components/common/loader/Loader";
+import Notification from "./components/common/notification/Notification";
 
 function App() {
   return (
     <>
+      <Notification />
+      <Loader />
       <Routes>
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<HomePage />} />

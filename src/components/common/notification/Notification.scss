@@ -1,0 +1,14 @@
+.notification {
+  position: fixed;
+  background-color: #00000000;
+  width: 500px;
+  height: 80px;
+  top: 15%;
+  z-index: 100;
+  left: 90%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  .toast {
+    display: block !important;
+  }
+}

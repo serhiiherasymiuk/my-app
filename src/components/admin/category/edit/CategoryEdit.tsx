@@ -1,13 +1,17 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { ICategory, ICategoryEdit } from "../../../../interfaces/category";
 import * as Yup from "yup";
-import { RootState } from "../../../../redux/store";
+import { RootState, store } from "../../../../redux/store";
 import { useSelector } from "react-redux";
 import { editCategory } from "../../../../redux/category";
 import { useDispatch } from "react-redux";
 import http_common from "../../../../http_common";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import {
+  NotificationSetMessage,
+  NotificationActionTypes,
+} from "../../../../redux/reducers/notificationReducer";
 
 export const CategoryEdit = () => {
   const categories = useSelector(
@@ -60,6 +64,11 @@ export const CategoryEdit = () => {
         }
       );
       dispatch(editCategory(response));
+      const action: NotificationSetMessage = {
+        payload: "Category successfully edited",
+        type: NotificationActionTypes.SET_MESSAGE,
+      };
+      store.dispatch(action);
       navigate("../..");
     } catch (error) {
       console.error("Error editing category:", error);
@@ -69,6 +78,11 @@ export const CategoryEdit = () => {
   useEffect(() => {
     http_common.get(`api/category/${id}`).then((resp) => {
       const { data } = resp;
+      const action: NotificationSetMessage = {
+        payload: "Category info loaded",
+        type: NotificationActionTypes.SET_MESSAGE,
+      };
+      store.dispatch(action);
       setInitialValues((prevValues) => ({
         ...prevValues,
         name: data.name,

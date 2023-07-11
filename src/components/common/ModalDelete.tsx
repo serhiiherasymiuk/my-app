@@ -4,6 +4,8 @@ import { useDispatch } from "react-redux";
 import { deleteCategory } from "../../redux/category";
 import { FC, useState } from "react";
 import http_common from "../../http_common";
+import { NotificationSetMessage, NotificationActionTypes } from "../../redux/reducers/notificationReducer";
+import { store } from "../../redux/store";
 
 interface Props {
   id: number;
@@ -19,6 +21,11 @@ export const ModalDelete: FC<Props> = ({ id, text }) => {
     try {
       await http_common.delete(`api/category/${id}`);
       dispatch(deleteCategory(id));
+      const action: NotificationSetMessage = {
+        payload: "Category successfully deleted",
+        type: NotificationActionTypes.SET_MESSAGE,
+      };
+      store.dispatch(action);
     } catch (error) {
       console.error("Error deleting category:", error);
     }
